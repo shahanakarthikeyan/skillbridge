@@ -1,0 +1,102 @@
+[
+  {
+    "id": "py-101",
+    "title": "Python for Beginners",
+    "level": "beginner",
+    "category": "Programming",
+    "skills_covered": ["python", "programming basics"],
+    "hours": 8,
+    "url": "https://www.coursera.org/learn/python",
+    "relevance_score": 0.9
+  },
+  {
+    "id": "py-201",
+    "title": "Intermediate Python & OOP",
+    "level": "intermediate",
+    "category": "Programming",
+    "skills_covered": ["python", "oop", "object oriented"],
+    "hours": 12,
+    "url": "https://www.udemy.com/course/python-beyond-the-basics-object-oriented-programming/",
+    "relevance_score": 0.88
+  },
+  {
+    "id": "sql-101",
+    "title": "SQL Fundamentals",
+    "level": "beginner",
+    "category": "Data",
+    "skills_covered": ["sql", "database", "queries"],
+    "hours": 6,
+    "url": "https://www.w3schools.com/sql/",
+    "relevance_score": 0.85
+  },
+  {
+    "id": "ml-201",
+    "title": "Machine Learning with scikit-learn",
+    "level": "intermediate",
+    "category": "Data",
+    "skills_covered": ["machine learning", "scikit-learn", "ml", "sklearn"],
+    "hours": 20,
+    "url": "https://www.coursera.org/learn/machine-learning",
+    "relevance_score": 0.92
+  },
+  {
+    "id": "aws-101",
+    "title": "AWS Cloud Practitioner",
+    "level": "beginner",
+    "category": "Cloud",
+    "skills_covered": ["aws", "cloud", "amazon web services"],
+    "hours": 10,
+    "url": "https://aws.amazon.com/training/",
+    "relevance_score": 0.87
+  },
+  {
+    "id": "docker-201",
+    "title": "Docker & Containers",
+    "level": "intermediate",
+    "category": "Cloud",
+    "skills_covered": ["docker", "containers", "devops"],
+    "hours": 8,
+    "url": "https://www.docker.com/get-started/",
+    "relevance_score": 0.86
+  },
+  {
+    "id": "comm-101",
+    "title": "Business Communication Essentials",
+    "level": "beginner",
+    "category": "Communication",
+    "skills_covered": ["communication", "writing", "presentation"],
+    "hours": 5,
+    "url": "https://www.coursera.org/learn/communication-skills",
+    "relevance_score": 0.8
+  },
+  {
+    "id": "pm-201",
+    "title": "Project Management Professional",
+    "level": "intermediate",
+    "category": "Management",
+    "skills_covered": ["project management", "agile", "scrum", "jira"],
+    "hours": 15,
+    "url": "https://www.pmi.org/certifications/project-management-pmp",
+    "relevance_score": 0.89
+  },
+  {
+    "id": "react-201",
+    "title": "React & Frontend Development",
+    "level": "intermediate",
+    "category": "Programming",
+    "skills_covered": ["react", "javascript", "frontend", "typescript"],
+    "hours": 18,
+    "url": "https://react.dev/learn",
+    "relevance_score": 0.91
+  },
+  {
+    "id": "data-viz-101",
+    "title": "Data Visualization with Python",
+    "level": "beginner",
+    "category": "Data",
+    "skills_covered": ["data visualization", "matplotlib", "seaborn", "tableau"],
+    "hours": 8,
+    "url": "https://www.kaggle.com/learn/data-visualization",
+    "relevance_score": 0.84
+  }
+]
