@@ -7,4 +7,3 @@ httpx==0.27.0
 python-dotenv==1.0.1
 groq==0.9.0
 pdfplumber==0.11.0
-secure-smtplibs
