@@ -18,15 +18,25 @@ export default function App() {
     setError(null);
     setResult(null);
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 120000);
+
       const res = await fetch(`${API}/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resume_text: resumeText, jd_text: jdText }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeout);
       const data = await res.json();
       setResult(data);
     } catch (e) {
-      setError("Analysis failed. Please check your inputs.");
+      if (e.name === "AbortError") {
+        setError("Server is warming up. Please wait 30 seconds and try again.");
+      } else {
+        setError("Analysis failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -34,7 +44,6 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* Hero Header */}
       <header className="hero">
         <div className="hero-bg" />
         <div className="hero-content">
@@ -56,6 +65,14 @@ export default function App() {
         {error && (
           <div className="error-banner">
             <span>⚠️</span> {error}
+            <button
+              onClick={() => setError(null)}
+              style={{
+                marginLeft: "auto", background: "none",
+                border: "none", color: "#fca5a5",
+                cursor: "pointer", fontSize: 18
+              }}
+            >×</button>
           </div>
         )}
 
@@ -67,13 +84,15 @@ export default function App() {
               <div className="loading-sub">
                 Extracting skills → Computing gaps → Building pathway
               </div>
+              <div className="loading-sub" style={{ marginTop: 4, color: "#475569" }}>
+                This may take 30-60 seconds on first run
+              </div>
             </div>
           </div>
         )}
 
         {result && (
           <>
-            {/* Stats Grid */}
             <div className="stats-grid">
               {[
                 {
@@ -115,19 +134,16 @@ export default function App() {
               ))}
             </div>
 
-            {/* Skill Gap Visualizer */}
             <SkillGapVisualizer
               gaps={result.skill_gap?.gaps}
               matched={result.skill_gap?.matched}
             />
 
-            {/* Learning Roadmap */}
             <Roadmap
               pathway={result.pathway}
               skillGap={result.skill_gap}
             />
 
-            {/* Reasoning Trace */}
             <button
               className="trace-btn"
               onClick={() => setShowTrace(!showTrace)}
@@ -148,3 +164,10 @@ export default function App() {
     </div>
   );
 }
+```
+
+Update on GitHub → Render redeploys → test live site again!
+
+Also before testing, visit this URL first to wake up backend:
+```
+https://skillbridge-api-ovch.onrender.com/health
