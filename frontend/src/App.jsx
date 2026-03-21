@@ -1,9 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import UploadPanel from "./components/UploadPanel";
 import Roadmap from "./components/Roadmap";
 import ReasoningTrace from "./components/ReasoningTrace";
+import SkillGapVisualizer from "./components/SkillGapVisualizer";
 import "./App.css";
-import React from "react";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -64,41 +64,86 @@ export default function App() {
             <div className="spinner" />
             <div>
               <div className="loading-title">Agent is analyzing...</div>
-              <div className="loading-sub">Extracting skills → Computing gaps → Building pathway</div>
+              <div className="loading-sub">
+                Extracting skills → Computing gaps → Building pathway
+              </div>
             </div>
           </div>
         )}
 
         {result && (
           <>
+            {/* Stats Grid */}
             <div className="stats-grid">
               {[
-                { label: "Skills matched", value: result.skill_gap?.matched?.length ?? 0, color: "#10b981", icon: "✅" },
-                { label: "Skill gaps", value: result.skill_gap?.gaps?.length ?? 0, color: "#f59e0b", icon: "📌" },
-                { label: "Coverage", value: `${result.skill_gap?.coverage_pct ?? 0}%`, color: "#6366f1", icon: "📈" },
-                { label: "Modules", value: result.pathway?.length ?? 0, color: "#3b82f6", icon: "📚" },
+                {
+                  label: "Skills matched",
+                  value: result.skill_gap?.matched?.length ?? 0,
+                  color: "#10b981",
+                  icon: "✅"
+                },
+                {
+                  label: "Skill gaps",
+                  value: result.skill_gap?.gaps?.length ?? 0,
+                  color: "#f59e0b",
+                  icon: "📌"
+                },
+                {
+                  label: "Coverage",
+                  value: `${result.skill_gap?.coverage_pct ?? 0}%`,
+                  color: "#6366f1",
+                  icon: "📈"
+                },
+                {
+                  label: "Modules",
+                  value: result.pathway?.length ?? 0,
+                  color: "#3b82f6",
+                  icon: "📚"
+                },
               ].map((s) => (
-                <div key={s.label} className="stat-card" style={{ "--accent": s.color }}>
+                <div
+                  key={s.label}
+                  className="stat-card"
+                  style={{ "--accent": s.color }}
+                >
                   <div className="stat-icon">{s.icon}</div>
-                  <div className="stat-value" style={{ color: s.color }}>{s.value}</div>
+                  <div className="stat-value" style={{ color: s.color }}>
+                    {s.value}
+                  </div>
                   <div className="stat-label">{s.label}</div>
                 </div>
               ))}
             </div>
 
-            <Roadmap pathway={result.pathway} skillGap={result.skill_gap} />
+            {/* Skill Gap Visualizer */}
+            <SkillGapVisualizer
+              gaps={result.skill_gap?.gaps}
+              matched={result.skill_gap?.matched}
+            />
 
-            <button className="trace-btn" onClick={() => setShowTrace(!showTrace)}>
+            {/* Learning Roadmap */}
+            <Roadmap
+              pathway={result.pathway}
+              skillGap={result.skill_gap}
+            />
+
+            {/* Reasoning Trace */}
+            <button
+              className="trace-btn"
+              onClick={() => setShowTrace(!showTrace)}
+            >
               {showTrace ? "🙈 Hide" : "🧠 Show"} reasoning trace
             </button>
 
-            {showTrace && <ReasoningTrace trace={result.reasoning_trace} />}
+            {showTrace && (
+              <ReasoningTrace trace={result.reasoning_trace} />
+            )}
           </>
         )}
       </main>
 
       <footer className="footer">
-        <p>SkillBridge © 2025 · Built with Agentic AI + n8n + Groq</p>
+        <p>SkillBridge © 2025 · Built with Agentic AI + Groq + Gmail</p>
       </footer>
     </div>
   );
