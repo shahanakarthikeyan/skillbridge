@@ -3,6 +3,7 @@ import UploadPanel from "./components/UploadPanel";
 import Roadmap from "./components/Roadmap";
 import ReasoningTrace from "./components/ReasoningTrace";
 import "./App.css";
+import React from "react";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
