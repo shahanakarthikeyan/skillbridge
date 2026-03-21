@@ -5,13 +5,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = Groq(api_key=os.environ.get("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"))
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 def extract_skills(text, source):
     try:
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
-            max_tokens=1500,
+            max_tokens=2000,
             temperature=0,
             messages=[
                 {
@@ -25,16 +25,32 @@ def extract_skills(text, source):
 Text: {text[:3000]}
 
 Return this exact JSON format:
-{{"skills": [{{"name": "python", "level": "beginner", "years": 2, "category": "Programming"}}], "trace": "found X skills"}}
+{{
+  "skills": [
+    {{
+      "name": "python",
+      "level": "intermediate",
+      "current_level": "intermediate",
+      "years": 2,
+      "category": "Programming",
+      "gap_severity": "none"
+    }}
+  ],
+  "trace": "found X skills"
+}}
 
-level must be: beginner, intermediate, or advanced
-category must be: Programming, Data, Cloud, Management, Communication, Domain-specific"""
+Rules:
+- level must be exactly: beginner, intermediate, or advanced
+- current_level same as level
+- category must be: Programming, Data, Cloud, Management, Communication, Design, Domain-specific
+- gap_severity for resume extraction: always "none"
+- Extract every skill mentioned"""
                 }
             ]
         )
 
         raw = response.choices[0].message.content.strip()
-        print(f"Raw response for {source}: {raw[:200]}")
+        print(f"Raw response for {source}: {raw[:300]}")
 
         if "```" in raw:
             raw = raw.split("```")[1]
