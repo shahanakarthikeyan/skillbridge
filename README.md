@@ -6,6 +6,7 @@ SkillBridge is an agentic AI-powered onboarding engine that analyzes a new hire'
 
 🔗 **Live Demo:** https://skillbridge-ui.onrender.com  
 📹 **Demo Video:** https://drive.google.com/file/d/1RFxNGo4UqrKA59YxxLgq-st8p5EptGBC/view?usp=sharing
+
 📂 **GitHub:** https://github.com/shahanakarthikeyan/skillbridge
 
 ---
