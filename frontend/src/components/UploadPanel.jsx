@@ -1,5 +1,4 @@
-import { useState } from "react";
-import React from "react";
+import React, { useState } from "react";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -8,25 +7,36 @@ export default function UploadPanel({ onAnalyze, loading }) {
   const [jdText, setJdText] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
 
   async function handleFileUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
     setResumeFile(file.name);
     setUploading(true);
+    setUploadError("");
     try {
       const formData = new FormData();
       formData.append("file", file);
+
       const res = await fetch(`${API}/extract-text`, {
         method: "POST",
         body: formData,
       });
+
       const data = await res.json();
-      if (data.text && data.text.length > 0) {
+      console.log("Extract response:", data);
+
+      if (data.text && data.text.trim().length > 50) {
         setResumeText(data.text);
+      } else if (data.error) {
+        setUploadError("PDF extraction failed. Please paste your resume text manually.");
+      } else {
+        setUploadError("Could not extract text. Please paste your resume manually.");
       }
     } catch (err) {
-      console.error("Upload failed", err);
+      console.error("Upload failed:", err);
+      setUploadError("Upload failed. Please paste your resume text manually.");
     } finally {
       setUploading(false);
     }
@@ -45,7 +55,7 @@ export default function UploadPanel({ onAnalyze, loading }) {
         fontSize: 18, fontWeight: 700,
         marginBottom: 20, color: "#e2e8f0"
       }}>
-        📋 Paste or upload your documents
+        Paste or upload your documents
       </h2>
 
       <div style={{
@@ -64,24 +74,23 @@ export default function UploadPanel({ onAnalyze, loading }) {
             Resume / CV
           </label>
 
-          {/* File upload button */}
           <label style={{
             display: "flex", alignItems: "center", gap: 8,
             padding: "10px 14px", borderRadius: 10,
             cursor: uploading ? "not-allowed" : "pointer",
-            background: resumeFile
+            background: resumeText
               ? "rgba(16,185,129,0.1)"
               : "rgba(99,102,241,0.1)",
-            border: resumeFile
+            border: resumeText
               ? "1px dashed rgba(16,185,129,0.4)"
               : "1px dashed rgba(99,102,241,0.4)",
-            color: resumeFile ? "#10b981" : "#818cf8",
+            color: resumeText ? "#10b981" : "#818cf8",
             fontSize: 13, fontWeight: 600,
             marginBottom: 10, transition: "all 0.2s"
           }}>
             {uploading
-              ? "⏳ Extracting text from PDF..."
-              : resumeFile
+              ? "Extracting text from PDF..."
+              : resumeText
               ? `✅ ${resumeFile}`
               : "📎 Upload PDF or TXT file"}
             <input
@@ -92,6 +101,26 @@ export default function UploadPanel({ onAnalyze, loading }) {
               disabled={uploading}
             />
           </label>
+
+          {uploadError && (
+            <div style={{
+              marginBottom: 8, padding: "8px 12px",
+              background: "rgba(239,68,68,0.1)",
+              borderRadius: 8, color: "#fca5a5", fontSize: 12
+            }}>
+              {uploadError}
+            </div>
+          )}
+
+          {resumeText && !uploading && (
+            <div style={{
+              marginBottom: 8, padding: "8px 12px",
+              background: "rgba(16,185,129,0.1)",
+              borderRadius: 8, color: "#10b981", fontSize: 12
+            }}>
+              ✅ {resumeText.length} characters extracted successfully
+            </div>
+          )}
 
           <textarea
             style={{
@@ -147,28 +176,6 @@ export default function UploadPanel({ onAnalyze, loading }) {
         </div>
       </div>
 
-      {/* Status messages */}
-      {uploading && (
-        <div style={{
-          marginBottom: 12, padding: "10px 16px",
-          background: "rgba(99,102,241,0.1)",
-          borderRadius: 8, color: "#818cf8", fontSize: 13
-        }}>
-          ⏳ Extracting text from PDF, please wait...
-        </div>
-      )}
-
-      {resumeFile && resumeText && !uploading && (
-        <div style={{
-          marginBottom: 12, padding: "10px 16px",
-          background: "rgba(16,185,129,0.1)",
-          borderRadius: 8, color: "#10b981", fontSize: 13
-        }}>
-          ✅ PDF extracted successfully — {resumeText.length} characters ready
-        </div>
-      )}
-
-      {/* Generate button */}
       <button
         onClick={() => onAnalyze(resumeText, jdText)}
         disabled={!canGenerate}
@@ -193,9 +200,9 @@ export default function UploadPanel({ onAnalyze, loading }) {
         {loading
           ? "🤖 Agent analyzing your profile..."
           : !jdText
-          ? "⬆️ Add job description to continue"
+          ? "Add job description to continue"
           : !resumeText && !resumeFile
-          ? "⬆️ Upload or paste resume to continue"
+          ? "Upload or paste resume to continue"
           : "✨ Generate Learning Pathway →"}
       </button>
     </div>
