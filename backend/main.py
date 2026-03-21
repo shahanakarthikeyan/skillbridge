@@ -11,6 +11,23 @@ from dotenv import load_dotenv
 import pdfplumber
 import io
 
+import asyncio
+import httpx
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(keep_alive())
+
+async def keep_alive():
+    while True:
+        await asyncio.sleep(840)  # ping every 14 minutes
+        try:
+            async with httpx.AsyncClient() as client:
+                await client.get("https://skillbridge-api-ovch.onrender.com/health")
+                print("Keep-alive ping sent")
+        except:
+            pass
+            
 load_dotenv()
 
 app = FastAPI(title="SkillBridge API")
