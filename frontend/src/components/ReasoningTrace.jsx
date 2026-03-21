@@ -1,3 +1,4 @@
+import React from "react";
 export default function ReasoningTrace({ trace }) {
   const sections = [
     { key: "extraction", label: "🔍 Skill extraction", color: "#6366f1" },
