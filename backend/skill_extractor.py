@@ -11,46 +11,22 @@ def extract_skills(text, source):
     try:
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
-            max_tokens=2000,
+            max_tokens=800,
             temperature=0,
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a skill extraction engine. Return ONLY valid JSON, no markdown, no explanation."
+                    "content": "Extract skills and return ONLY JSON. No markdown."
                 },
                 {
                     "role": "user",
-                    "content": f"""Extract skills from this {source} text.
-
-Text: {text[:3000]}
-
-Return this exact JSON format:
-{{
-  "skills": [
-    {{
-      "name": "python",
-      "level": "intermediate",
-      "current_level": "intermediate",
-      "years": 2,
-      "category": "Programming",
-      "gap_severity": "none"
-    }}
-  ],
-  "trace": "found X skills"
-}}
-
-Rules:
-- level must be exactly: beginner, intermediate, or advanced
-- current_level same as level
-- category must be: Programming, Data, Cloud, Management, Communication, Design, Domain-specific
-- gap_severity for resume extraction: always "none"
-- Extract every skill mentioned"""
+                    "content": "Extract skills from this " + source + ":\n\n" + text[:1500] + "\n\nReturn ONLY this JSON:\n{\"skills\": [{\"name\": \"python\", \"level\": \"beginner\", \"years\": null, \"category\": \"Programming\"}], \"trace\": \"found X skills\"}"
                 }
             ]
         )
 
         raw = response.choices[0].message.content.strip()
-        print(f"Raw response for {source}: {raw[:300]}")
+        print(f"Raw response for {source}: {raw[:200]}")
 
         if "```" in raw:
             raw = raw.split("```")[1]
@@ -62,7 +38,7 @@ Rules:
         print(f"Extracted {len(skills)} skills from {source}")
 
         trace = [{
-            "step": f"Skill extraction ({source})",
+            "step": "Skill extraction (" + source + ")",
             "reasoning": data.get("trace", ""),
             "output_count": len(skills)
         }]
