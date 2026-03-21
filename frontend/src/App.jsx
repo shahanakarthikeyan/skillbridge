@@ -164,10 +164,4 @@ export default function App() {
     </div>
   );
 }
-```
 
-Update on GitHub → Render redeploys → test live site again!
-
-Also before testing, visit this URL first to wake up backend:
-```
-https://skillbridge-api-ovch.onrender.com/health
