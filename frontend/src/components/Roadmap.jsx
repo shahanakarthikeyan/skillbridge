@@ -1,5 +1,6 @@
-import { useState } from "react";
 import React from "react";
+
+import { useState } from "react";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -85,3 +86,5 @@ export default function Roadmap({ pathway, skillGap }) {
     </div>
   );
 }
+
+
