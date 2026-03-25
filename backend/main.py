@@ -5,10 +5,11 @@ import uvicorn
 import traceback
 import os
 import smtplib
-import io
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
+import pdfplumber
+import io
 
 load_dotenv()
 
@@ -39,43 +40,17 @@ def health():
 async def extract_text(file: UploadFile = File(...)):
     try:
         contents = await file.read()
-        text = ""
-
-        if file.filename.lower().endswith(".pdf"):
-            # Try pdfplumber first
-            try:
-                import pdfplumber
-                with pdfplumber.open(io.BytesIO(contents)) as pdf:
-                    text = "\n".join([
-                        page.extract_text() or ""
-                        for page in pdf.pages
-                    ])
-                print(f"pdfplumber extracted {len(text)} chars")
-            except Exception as e1:
-                print(f"pdfplumber failed: {e1}")
-                # Fallback to PyPDF2
-                try:
-                    import PyPDF2
-                    reader = PyPDF2.PdfReader(io.BytesIO(contents))
-                    text = "\n".join([
-                        page.extract_text() or ""
-                        for page in reader.pages
-                    ])
-                    print(f"PyPDF2 extracted {len(text)} chars")
-                except Exception as e2:
-                    print(f"PyPDF2 failed: {e2}")
-                    # Last fallback
-                    text = contents.decode("utf-8", errors="ignore")
-                    print(f"Raw decode extracted {len(text)} chars")
+        if file.filename.endswith(".pdf"):
+            with pdfplumber.open(io.BytesIO(contents)) as pdf:
+                text = "\n".join([
+                    page.extract_text() or ""
+                    for page in pdf.pages
+                ])
         else:
-            text = contents.decode("utf-8", errors="ignore")
-
-        print(f"Total extracted: {len(text)} characters from {file.filename}")
+            text = contents.decode("utf-8")
         return {"text": text, "filename": file.filename}
-
     except Exception as e:
-        print(f"Extract error: {str(e)}")
-        return {"error": str(e), "text": ""}
+        return {"error": str(e)}
 
 @app.post("/analyze")
 async def analyze(req: AnalysisRequest):
@@ -98,7 +73,7 @@ async def send_roadmap(req: EmailRequest):
             return {"error": "Gmail not configured in .env file"}
 
         rows = "".join([
-            f"""<tr style='background:{"#1e1e2e" if i%2==0 else "#16213e"}'>
+            f"""<tr>
               <td style='padding:12px;border:1px solid #333;color:#e2e8f0'>{i+1}. {p['skill_gap']}</td>
               <td style='padding:12px;border:1px solid #333;color:#a5b4fc'>{p['course']['title']}</td>
               <td style='padding:12px;border:1px solid #333;color:#ef4444'>{p['priority']}</td>
